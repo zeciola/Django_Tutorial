@@ -1,0 +1,68 @@
+services:
+
+  django:
+    container_name: django
+    command: python manage.py runserver 0.0.0.0:8000
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 8000:80
+    volumes:
+    - .:/app
+    depends_on:
+    - db
+    networks:
+      nginx_network:
+        aliases:
+          - django_service
+      database_network:
+
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    expose:
+      - 80
+    networks:
+      - nginx_network
+    depends_on:
+      - django
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1024M
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+
+  db:
+    container_name: database
+    image: postgres
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - database_network
+
+networks:
+  database_network:
+    driver: bridge
+  nginx_network:
+    driver: bridge
