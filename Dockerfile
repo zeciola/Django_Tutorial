@@ -1,10 +1,9 @@
-FROM python:3.9
+FROM python:3.9.12-slim
 
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 COPY . /app/
 
-RUN pip install pip -U ; pip install -r requirements.txt
-
-EXPOSE 8000
+RUN pip install pip -U
+RUN pip install -r requirements.txt

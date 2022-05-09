@@ -1,6 +1,6 @@
 services:
   django:
-    container_name: django
+    container_name: django_test
     entrypoint: python manage.py runserver 0.0.0.0:8000
     restart: always
     build:
@@ -20,13 +20,13 @@ services:
     depends_on:
     - db
     networks:
-      nginx_network:
+      nginx_network_test:
         aliases:
           - django_service
-      database_network:
+      database_network_test:
 
   nginx:
-    container_name: nginx
+    container_name: nginx_test
     build:
       context: ./nginx
       dockerfile: Dockerfile
@@ -35,7 +35,7 @@ services:
     expose:
       - 80
     networks:
-      - nginx_network
+      - nginx_network_test
     depends_on:
       - django
     deploy:
@@ -53,19 +53,19 @@ services:
           memory: 512M
 
   db:
-    container_name: database
+    container_name: database_test
     image: postgres
     volumes:
-      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres-test/data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     networks:
-      - database_network
+      - database_network_test
 
 networks:
-  database_network:
+  database_network_test:
     driver: bridge
-  nginx_network:
+  nginx_network_test:
     driver: bridge

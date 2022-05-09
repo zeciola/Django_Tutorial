@@ -1,2 +1,21 @@
+# DB Local Files
 postgres/*
 postgres
+postgres-test/*
+postgres-test
+
+# Python
+__pycache__
+__pycache__/*
+.python-version
+
+# Poetry
+poetry.lock
+pyproject.toml
+
+# Project
+README.md
+run.sh
+LICENCE
+.gitgnore
+.pytest_cache
